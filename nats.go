@@ -104,13 +104,13 @@ func NewNatsBroker(cfg *NatsBrokerConfig, logger Logger) (*NatsBroker, error) {
 		}),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("nats: create client: %v", err)
+		return nil, fmt.Errorf("nats: create client: %w", err)
 	}
 	broker.nc = nc
 
 	broker.js, err = broker.nc.JetStream(nats.MaxWait(cfg.MaxWaitResp), nats.PublishAsyncMaxPending(cfg.JsMessagesOutSize/2))
 	if err != nil {
-		return nil, fmt.Errorf("nats: create js context: %v", err)
+		return nil, fmt.Errorf("nats: create js context: %w", err)
 	}
 
 	return &broker, nil
@@ -138,7 +138,7 @@ func (b *NatsBroker) CreateKVStore(bucket string) (nats.KeyValue, error) {
 		Storage: nats.FileStorage,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("nats: create kv store: %v", err)
+		return nil, fmt.Errorf("nats: create kv store: %w", err)
 	}
 	return kv, nil
 }
@@ -146,7 +146,7 @@ func (b *NatsBroker) CreateKVStore(bucket string) (nats.KeyValue, error) {
 func (b *NatsBroker) GetKVStore(bucket string) (nats.KeyValue, error) {
 	kv, err := b.js.KeyValue(bucket)
 	if err != nil {
-		return nil, fmt.Errorf("nats: get kv store: %v", err)
+		return nil, fmt.Errorf("nats: get kv store: %w", err)
 	}
 	return kv, nil
 }
