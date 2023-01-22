@@ -2,6 +2,7 @@ package eventbus
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -137,7 +138,7 @@ func (b *NatsBroker) CreateKVStore(bucket string) (nats.KeyValue, error) {
 		Bucket:  bucket,
 		Storage: nats.FileStorage,
 	})
-	if err != nil {
+	if err != nil && !errors.Is(err, nats.ErrStreamNameAlreadyInUse) {
 		return nil, fmt.Errorf("nats: create kv store: %w", err)
 	}
 	return kv, nil
