@@ -151,6 +151,11 @@ func (b *NatsBroker) GetKVStore(bucket string) (nats.KeyValue, error) {
 	return kv, nil
 }
 
+func (b *NatsBroker) JsPublishMsg(msg *nats.Msg, opts ...nats.PubOpt) error {
+	_, err := b.js.PublishMsg(msg, opts...)
+	return err
+}
+
 func (b *NatsBroker) JsPublishMsgAsync(msg *nats.Msg) {
 	b.jsOut <- msg
 }
