@@ -2,7 +2,6 @@ package eventbus
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -134,22 +133,14 @@ func (b *NatsBroker) CreateJetStream(cfg *nats.StreamConfig, opts ...nats.JSOpt)
 }
 
 func (b *NatsBroker) CreateKVStore(bucket string) (nats.KeyValue, error) {
-	kv, err := b.js.CreateKeyValue(&nats.KeyValueConfig{
+	return b.js.CreateKeyValue(&nats.KeyValueConfig{
 		Bucket:  bucket,
 		Storage: nats.FileStorage,
 	})
-	if err != nil && !errors.Is(err, nats.ErrStreamNameAlreadyInUse) {
-		return nil, fmt.Errorf("nats: create kv store: %w", err)
-	}
-	return kv, nil
 }
 
 func (b *NatsBroker) GetKVStore(bucket string) (nats.KeyValue, error) {
-	kv, err := b.js.KeyValue(bucket)
-	if err != nil {
-		return nil, fmt.Errorf("nats: get kv store: %w", err)
-	}
-	return kv, nil
+	return b.js.KeyValue(bucket)
 }
 
 func (b *NatsBroker) JsPublishMsg(msg *nats.Msg, opts ...nats.PubOpt) error {
